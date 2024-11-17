@@ -7,7 +7,6 @@ from typing import Dict, Optional
 import os
 from dotenv import load_dotenv
 import logging
-from speed_tester import ComprehensiveSpeedTest
 import asyncio
 import json
 import google.generativeai as genai
@@ -203,5 +202,5 @@ def analyze_network_performance(download_speed: float, upload_speed: float, ping
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 8000))
+    port = int(os.getenv("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)

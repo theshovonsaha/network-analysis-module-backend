@@ -5,13 +5,15 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
+      - key: PORT
+        value: 10000
       - key: PYTHON_VERSION
-        value: 3.10.0
+        value: 3.11.0
       - key: MISTRAL_API_KEY
-        value: MISTRAL_API_KEY
+        sync: false
       - key: GOOGLE_API_KEY
-        value: GOOGLE_API_KEY
+        sync: false
       - key: ANTHROPIC_API_KEY
-        value: ANTHROPIC_API_KEY
+        sync: false
       - key: OPENAI_API_KEY
-        value: OPENAI_API_KEY
+        sync: false
