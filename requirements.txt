@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-dotenv
+aiohttp
+mistralai
+google-generativeai
+anthropic
+openai
+psutil
+netifaces
+scapy
