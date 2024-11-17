@@ -7,3 +7,11 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
+      - key: MISTRAL_API_KEY
+        value: MISTRAL_API_KEY
+      - key: GOOGLE_API_KEY
+        value: GOOGLE_API_KEY
+      - key: ANTHROPIC_API_KEY
+        value: ANTHROPIC_API_KEY
+      - key: OPENAI_API_KEY
+        value: OPENAI_API_KEY

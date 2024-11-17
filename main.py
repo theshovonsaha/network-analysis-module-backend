@@ -2,7 +2,6 @@ from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from mistralai.client import MistralClient
-from mistralai.models.chat_completion import ChatMessage
 import speedtest
 from typing import Dict, Optional
 import os
@@ -15,8 +14,6 @@ import google.generativeai as genai
 from anthropic import Anthropic
 import openai
 import psutil  # for system metrics
-import netifaces  # for network interface details
-import scapy.all as scapy  # for packet analysis
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -43,25 +40,23 @@ app.add_middleware(
 # Get Mistral API key
 mistral_api_key = os.getenv("MISTRAL_API_KEY")
 if not mistral_api_key:
-    logger.error("MISTRAL_API_KEY not found in environment variables")
-    raise ValueError("MISTRAL_API_KEY not found in environment variables")
+    logger.warning("MISTRAL_API_KEY not found in environment variables")
 
 # Initialize Mistral AI client
 try:
-    mistral_client = MistralClient(
-        api_key=mistral_api_key
-    )
+    if mistral_api_key:
+        mistral_client = MistralClient(api_key=mistral_api_key)
 except Exception as e:
     logger.error(f"Failed to initialize Mistral client: {str(e)}")
-    raise
 
 class AIProvider:
     @staticmethod
     async def analyze_with_mistral(api_key: str, prompt: str) -> str:
         client = MistralClient(api_key=api_key)
+        messages = [{"role": "user", "content": prompt}]
         response = client.chat(
             model="mistral-tiny",
-            messages=[ChatMessage(role="user", content=prompt)],
+            messages=messages,
             temperature=0.7,
             max_tokens=250
         )
@@ -98,14 +93,11 @@ class AIProvider:
 
 async def speed_test_generator():
     status_updates = [
-        {"status": "Initializing network probe...", "code": "sudo nmap -sS -p- target_network"},
-        {"status": "Scanning network topology...", "code": "traceroute -I optimal_server"},
-        {"status": "Analyzing bandwidth capacity...", "code": "netstat -s | grep segments"},
-        {"status": "Testing downstream channels...", "code": "tcpdump -i eth0 'tcp[tcpflags] & tcp-syn != 0'"},
-        {"status": "Measuring upstream throughput...", "code": "iperf3 -c speedtest.net -P 10"},
-        {"status": "Calculating network latency...", "code": "ping -c 5 -i 0.2 gateway"},
-        {"status": "Verifying connection stability...", "code": "curl -w '%{time_total}' -s speedtest/download"},
-        {"status": "Processing final results...", "code": "cat /proc/net/dev | grep eth0"},
+        {"status": "Initializing speed test...", "progress": 10},
+        {"status": "Testing download speed...", "progress": 30},
+        {"status": "Testing upload speed...", "progress": 60},
+        {"status": "Measuring latency...", "progress": 80},
+        {"status": "Finalizing results...", "progress": 90},
     ]
     
     for status in status_updates:
@@ -118,6 +110,14 @@ async def speedtest_status():
         speed_test_generator(),
         media_type="text/event-stream"
     )
+
+@app.get("/")
+async def root():
+    return {"message": "Network Analysis API is running"}
+
+@app.get("/healthcheck")
+async def healthcheck():
+    return {"status": "healthy"}
 
 @app.get("/speedtest")
 async def run_speedtest(
@@ -147,50 +147,9 @@ async def run_speedtest(
             network_io = psutil.net_io_counters()
             
             prompt = f"""You are an advanced network performance analyst. Analyze these speed test results:
-
-            NETWORK METRICS:
-            • Download Speed: {download_speed:.1f} Mbps
-            • Upload Speed: {upload_speed:.1f} Mbps
-            • Latency: {ping:.1f} ms
-            
-            SYSTEM CONTEXT:
-            • CPU Usage: {cpu_percent}%
-            • Memory Usage: {memory.percent}%
-            • Packets Sent: {network_io.packets_sent:,}
-            • Packets Received: {network_io.packets_recv:,}
-            • Packet Loss: {network_io.dropin + network_io.dropout:,} packets
-
-            PERFORMANCE BENCHMARKS:
-            • Gaming: <50ms latency, 25+ Mbps down
-            • 4K Streaming: 25+ Mbps down
-            • Video Conferencing: 3+ Mbps up/down
-            • Cloud Gaming: <30ms latency, 35+ Mbps down
-            • Large File Downloads: 100+ Mbps down
-            • Smart Home: 15+ Mbps down
-            • Remote Work: 10+ Mbps up/down, <100ms latency
-
-            Provide a detailed analysis in the following format:
-
-            # Connection Quality
-            [Evaluate overall network performance]
-
-            # Optimal Use Cases
-            • [List suitable activities]
-            • [Include specific examples]
-
-            # Limitations
-            • [List any bottlenecks]
-            • [Include system constraints]
-
-            # Recommendations
-            • [Provide actionable improvements]
-            • [Include optimization tips]
-
-            # Technical Insights
-            • [Analyze packet patterns]
-            • [Note any anomalies]
-
-            Keep the analysis technical but user-friendly."""
+            Download Speed: {download_speed:.1f} Mbps
+            Upload Speed: {upload_speed:.1f} Mbps
+            Latency: {ping:.1f} ms"""
 
             try:
                 analyze_func = provider_map.get(x_provider.lower())
@@ -238,20 +197,11 @@ def analyze_network_performance(download_speed: float, upload_speed: float, ping
             "status": "Poor" if download_speed < 1.5 or upload_speed < 1.5 else
                      "Good" if download_speed >= 3.0 and upload_speed >= 3.0 else "Fair",
             "details": "Video calls need balanced upload/download (3+ Mbps each)"
-        },
-        "smart_devices": {
-            "status": "Poor" if download_speed < 5 else
-                     "Good" if download_speed >= 15 else "Fair",
-            "details": "Smart home devices work best with 15+ Mbps"
-        },
-        "downloads": {
-            "status": "Poor" if download_speed < 50 else
-                     "Good" if download_speed >= 100 else "Fair",
-            "details": "Fast downloads need 100+ Mbps for large files"
         }
     }
     return analysis
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
