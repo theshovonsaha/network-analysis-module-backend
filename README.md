@@ -111,8 +111,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact
 
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter)
-Project Link: [https://github.com/yourusername/network-analysis-module-backend](https://github.com/yourusername/network-analysis-module-backend)
+Shovon Saha - [@theshovonsaha](https://www.theshovonsaha.com)
+Project Link: [https://github.com/theshovonsaha/network-analysis-module-backend](https://github.com/theshovonsaha/network-analysis-module-backend)
 
 I referenced the following code blocks for this README:
 
