@@ -29,24 +29,33 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "https://*.netlify.app",
+        "https://rawspeedtest.netlify.app",
         "https://your-custom-domain.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
-# Get Mistral API key
-mistral_api_key = os.getenv("MISTRAL_API_KEY")
-if not mistral_api_key:
-    logger.warning("MISTRAL_API_KEY not found in environment variables")
+# Initialize API keys
+mistral_api_key = os.getenv("MISTRAL_API_KEY", "testmistral")
+google_api_key = os.getenv("GOOGLE_API_KEY", "your-google-api-key")
+anthropic_api_key = os.getenv("ANTHROPIC_API_KEY", "your-anthropic-api-key")
+openai_api_key = os.getenv("OPENAI_API_KEY", "your-openai-api-key")
 
-# Initialize Mistral AI client
+# Initialize clients with default error handling
 try:
     if mistral_api_key:
         mistral_client = MistralClient(api_key=mistral_api_key)
+    if google_api_key:
+        genai.configure(api_key=google_api_key)
+    if anthropic_api_key:
+        anthropic_client = Anthropic(api_key=anthropic_api_key)
+    if openai_api_key:
+        openai.api_key = openai_api_key
 except Exception as e:
-    logger.error(f"Failed to initialize Mistral client: {str(e)}")
+    logger.error(f"Failed to initialize AI clients: {str(e)}")
 
 class AIProvider:
     @staticmethod
@@ -123,6 +132,23 @@ async def run_speedtest(
     x_api_key: Optional[str] = Header(None),
     x_provider: Optional[str] = Header(None)
 ) -> Dict:
+    # Validate provider and API key
+    if x_provider and x_provider.lower() not in provider_map:
+        raise HTTPException(status_code=400, detail="Invalid AI provider specified")
+    
+    if x_provider and not x_api_key:
+        raise HTTPException(status_code=400, detail="API key required for AI analysis")
+    
+    # Use dummy keys for testing if not provided
+    if not x_api_key:
+        dummy_keys = {
+            'mistral': 'testmistral',
+            'google': 'your-google-api-key',
+            'anthropic': 'your-anthropic-api-key',
+            'openai': 'your-openai-api-key'
+        }
+        x_api_key = dummy_keys.get(x_provider.lower()) if x_provider else None
+    
     try:
         st = speedtest.Speedtest()
         st.get_best_server()
@@ -202,5 +228,10 @@ def analyze_network_performance(download_speed: float, upload_speed: float, ping
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.getenv("PORT", 10000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=port,
+        reload=True
+    )

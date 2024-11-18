@@ -5,15 +5,17 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
+      - key: CORS_ORIGINS
+        value: "https://rawspeedtest.netlify.app,https://*.netlify.app,http://localhost:3000"
       - key: PORT
-        value: 10000
+        value: 8000
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: MISTRAL_API_KEY
-        sync: false
+        value: testmistral
       - key: GOOGLE_API_KEY
-        sync: false
+        value: your-google-api-key
       - key: ANTHROPIC_API_KEY
-        sync: false
+        value: your-anthropic-api-key
       - key: OPENAI_API_KEY
-        sync: false
+        value: your-openai-api-key
