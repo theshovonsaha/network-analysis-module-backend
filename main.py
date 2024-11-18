@@ -101,11 +101,46 @@ class AIProvider:
 
 async def speed_test_generator():
     status_updates = [
-        {"status": "Initializing speed test...", "progress": 10},
-        {"status": "Testing download speed...", "progress": 30},
-        {"status": "Testing upload speed...", "progress": 60},
-        {"status": "Measuring latency...", "progress": 80},
-        {"status": "Finalizing results...", "progress": 90},
+        {
+            "status": "🚀 Initializing speed test module...",
+            "code": "import speedtest\nst = speedtest.Speedtest()",
+            "progress": 5
+        },
+        {
+            "status": "🔍 Finding optimal server...",
+            "code": "servers = st.get_servers()\nbest = st.get_best_server()\nprint(f'Selected: {best[\"host\"]}')",
+            "progress": 15
+        },
+        {
+            "status": "📡 Testing download speed...",
+            "code": "download = st.download()\nspeed_mbps = download / 1_000_000",
+            "progress": 35
+        },
+        {
+            "status": "📊 Analyzing network conditions...",
+            "code": "packet_loss = analyze_packet_loss()\njitter = measure_jitter()",
+            "progress": 50
+        },
+        {
+            "status": "⚡ Running latency tests...",
+            "code": "for server in test_servers:\n    results.append(ping(server))",
+            "progress": 65
+        },
+        {
+            "status": "📤 Testing upload capabilities...",
+            "code": "upload = st.upload()\nspeed_mbps = upload / 1_000_000",
+            "progress": 80
+        },
+        {
+            "status": "🧠 Running AI analysis...",
+            "code": "analysis = await analyze_network_metrics(results)",
+            "progress": 90
+        },
+        {
+            "status": "✨ Finalizing results...",
+            "code": "return json.dumps(results, indent=2)",
+            "progress": 95
+        }
     ]
     
     for status in status_updates:
@@ -171,10 +206,29 @@ async def run_speedtest(
             memory = psutil.virtual_memory()
             network_io = psutil.net_io_counters()
             
-            prompt = f"""You are an advanced network performance analyst. Analyze these speed test results:
-            Download Speed: {download_speed:.1f} Mbps
-            Upload Speed: {upload_speed:.1f} Mbps
-            Latency: {ping:.1f} ms"""
+            prompt = f"""You are an advanced network performance analyst. Analyze these speed test results and provide insights in the following format:
+
+# Connection Quality
+Evaluate the overall connection quality based on the metrics:
+Download: {download_speed:.1f} Mbps
+Upload: {upload_speed:.1f} Mbps
+Latency: {ping:.1f} ms
+
+# Optimal Use Cases
+List the best use cases for this connection.
+
+# Limitations
+Identify potential limitations and bottlenecks.
+
+# Recommendations
+Provide specific recommendations for improvement.
+
+# Technical Insights
+Network Stability: [Analysis of jitter and packet loss]
+Bandwidth Utilization: [Analysis of speed metrics]
+Latency Profile: [Analysis of ping and response times]
+Performance Rating: [Overall rating out of 10]
+"""
 
             try:
                 analyze_func = provider_map.get(x_provider.lower())
