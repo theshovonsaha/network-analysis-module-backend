@@ -1,37 +1,55 @@
 # Network Analysis Module Backend
 
-A powerful backend service for network analysis built with FastAPI and Python. This service integrates with multiple AI providers and offers network monitoring capabilities.
+A sophisticated backend service for network analysis built with FastAPI and Python. This service provides comprehensive network testing capabilities with AI-powered analysis through multiple providers.
 
 ## Features
+
+### Network Testing
+
+- Multi-source speed testing using:
+  - Direct downloads from multiple CDNs
+  - Speedtest.net integration
+  - iPerf3 testing (when available)
+- Latency analysis with multiple targets
+- Packet loss detection
+- Jitter measurement
+- Composite speed calculations
 
 ### AI Integration
 
 - Support for multiple AI providers:
   - Mistral AI
-  - Google Generative AI
+  - Google Gemini
   - Anthropic Claude
   - OpenAI
+- Customizable analysis prompts
+- Real-time performance insights
+- Gaming and streaming optimization recommendations
 
-### Network Analysis
+### System Monitoring
 
-- Real-time network monitoring
-- Interface statistics collection
-- Network traffic analysis using Scapy
-- System resource monitoring with psutil
-- Network interface management via netifaces
+- CPU utilization tracking
+- Memory usage analysis
+- Network interface statistics
+- Packet transmission metrics
 
 ## Tech Stack
 
-- **FastAPI**: High-performance web framework for building APIs
+- **FastAPI**: High-performance async web framework
 - **Uvicorn**: Lightning-fast ASGI server
 - **Python-dotenv**: Environment variable management
-- **aiohttp**: Async HTTP client/server framework
-- **AI SDKs**: Multiple AI provider integrations
-- **Network Tools**: psutil, netifaces, scapy
+- **AI SDKs**: Multiple provider integrations
+- **Network Tools**:
+  - speedtest-cli: Internet speed testing
+  - psutil: System metrics
+  - iperf3: Advanced network testing (optional)
+  - aiohttp: Async HTTP operations
 
 ## Requirements
 
 - Python 3.8 or higher
+- pip package manager
+- (Optional) iPerf3 client
 
 ## Installation
 
@@ -77,19 +95,43 @@ The API will be available at `http://localhost:8000`
 
 ## API Documentation
 
-Once the server is running, you can access:
-
 - Interactive API docs: `http://localhost:8000/docs`
 - Alternative API docs: `http://localhost:8000/redoc`
 
-## Development
+## Deployment
 
-This project follows modern Python development practices:
+The service is configured for deployment on Render:
 
-- Type hints for better code quality
-- Async/await for efficient I/O operations
-- Modular design for easy maintenance
-- Comprehensive API documentation
+- Auto-deployment on push to main branch
+- Environment variable management
+- CORS configuration for frontend integration
+- Health check endpoints
+
+## Future Improvements
+
+### Network Analysis
+
+- WebRTC-based peer-to-peer speed testing
+- Network path analysis and traceroute visualization
+- QoS (Quality of Service) measurement
+- IPv6 performance metrics
+- Historical data tracking and trending
+
+### AI Integration
+
+- Custom AI model training for network analysis
+- Anomaly detection using machine learning
+- Predictive performance analytics
+- Network optimization recommendations
+- Bandwidth usage forecasting
+
+### System Features
+
+- Real-time WebSocket updates
+- Distributed testing nodes
+- API rate limiting and caching
+- Extended metrics collection
+- Custom testing profiles
 
 ## Contributing
 
@@ -103,51 +145,14 @@ This project follows modern Python development practices:
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## Contact
+
+Your Name - [@yourusername](https://twitter.com/yourusername)
+Project Link: [https://github.com/yourusername/network-analysis-module-backend](https://github.com/yourusername/network-analysis-module-backend)
+
 ## Acknowledgments
 
 - FastAPI for the excellent web framework
-- All AI providers for their powerful APIs
+- AI providers for their powerful APIs
 - Network analysis tool maintainers
-
-## Contact
-
-Shovon Saha - [@theshovonsaha](https://www.theshovonsaha.com)
-Project Link: [https://github.com/theshovonsaha/network-analysis-module-backend](https://github.com/theshovonsaha/network-analysis-module-backend)
-
-I referenced the following code blocks for this README:
-
-- [FastAPI Documentation](https://fastapi.tiangolo.com/tutorial/first-steps/)
-- [Python Virtual Environments](https://docs.python.org/3/library/venv.html)
-- [Python Environment Variables](https://docs.python.org/3/library/os.html#os.getenv)
-  fastapi
-  uvicorn
-  python-dotenv
-  aiohttp
-  mistralai
-  google-generativeai
-  anthropic
-  openai
-  psutil
-  netifaces
-  scapy
-
-<p align="center">
-  <a href="https://fastapi.tiangolo.com"><img src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png" alt="FastAPI"></a>
-</p>
-<p align="center">
-    <em>FastAPI framework, high performance, easy to learn, fast to code, ready for production</em>
-</p>
-<p align="center">
-<a href="https://github.com/tiangolo/fastapi/actions?query=workflow%3ATest+event%3Apush+branch%3Amaster" target="_blank">
-    <img src="https://github.com/tiangolo/fastapi/workflows/Test/badge.svg?event=push&branch=master" alt="Test">
-</a>
-<a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/tiangolo/fastapi" target="_blank">
-    <img src="https://coverage-badge.samuelcolvin.workers.dev/tiangolo/fastapi.svg" alt="Coverage">
-</a>
-<a href="https://pypi.org/project/fastapi" target="_blank">
-    <img src="https://img.shields.io/pypi/v/fastapi?color=%2334D058&label=pypi%20package" alt="Package version">
-</a>
-<a href="https://pypi.org/project/fastapi" target="_blank">
-    <img src="https://img.shields.io/pypi/pyversions/fastapi.svg?color=%2334D058" alt="Supported Python versions">
-</a>
-</p>
+- Open source community
